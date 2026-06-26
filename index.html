@@ -11,7 +11,7 @@
 </head>
 <body>
     <h3>Lucky Spin</h3>
-    <p>Coins: <span id="coinCount">0</span></p>
+    <p>Total Coins: <span id="coinCount">0</span></p>
     <canvas id="wheel" width="300" height="300"></canvas>
     <button onclick="spin()">Spin Now</button>
     <button onclick="withdraw()">Withdraw</button>
@@ -24,10 +24,11 @@
 
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
+        // Price pool ti tlem tawh (1, 5, 10, 20, 50 coins)
         const sectors = [
-            { color: '#FF5733', label: '1000$' }, { color: '#33FF57', label: '100$' },
-            { color: '#3357FF', label: '500$' }, { color: '#F333FF', label: 'LOSE' },
-            { color: '#FF33A8', label: '7000$' }, { color: '#33FFF6', label: '200$' }
+            { color: '#FF5733', label: '1' }, { color: '#33FF57', label: '5' },
+            { color: '#3357FF', label: '10' }, { color: '#F333FF', label: '0' },
+            { color: '#FF33A8', label: '50' }, { color: '#33FFF6', label: '20' }
         ];
 
         function drawWheel() {
@@ -42,28 +43,29 @@
                 ctx.fillStyle = "#fff";
                 ctx.translate(150 + Math.cos(i * arc + arc/2) * 80, 150 + Math.sin(i * arc + arc/2) * 80);
                 ctx.rotate(i * arc + arc/2 + Math.PI/2);
-                ctx.fillText(s.label, -10, 0);
+                ctx.fillText(s.label + " Coins", -20, 0);
                 ctx.restore();
             });
         }
         drawWheel();
 
         function spin() {
-            let angle = Math.floor(Math.random() * 3600) + 720;
+            // Chance: 0 (Lose) a chhuah tam nan random percentage kan ti sang
+            let rand = Math.random();
+            let index;
+            if (rand < 0.5) index = 3; // 50% chance in '0' (Lose) a chhuak
+            else index = Math.floor(Math.random() * 5); // A bakah chuan point tlem te te
+
+            let angle = (index * 60) + 1440;
             canvas.style.transition = "3s ease-out";
             canvas.style.transform = `rotate(${angle}deg)`;
             
             setTimeout(() => {
-                let index = Math.floor(((angle % 360) / 60)); // 360/6 sectors
-                let win = sectors[sectors.length - 1 - index].label;
-                if(win !== 'LOSE') {
-                    coins += parseInt(win) || 10;
-                    localStorage.setItem('userCoins', coins);
-                    document.getElementById('coinCount').innerText = coins;
-                    alert("I hlawhchhuah chu: " + win);
-                } else {
-                    alert("A pawi hle mai, i chan!");
-                }
+                let win = parseInt(sectors[index].label);
+                coins += win;
+                localStorage.setItem('userCoins', coins);
+                document.getElementById('coinCount').innerText = coins;
+                alert("I hlawhchhuah chu: " + win + " coins!");
             }, 3000);
         }
 
