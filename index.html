@@ -56,28 +56,34 @@
         }
         drawWheel();
 
-        function spin() {
-            let rand = Math.random();
-            let index;
-            if (rand < 0.50) index = 4;      // 50% chance: 5
-            else if (rand < 0.80) index = 1; // 30% chance: 10
-            else if (rand < 0.95) index = 3; // 15% chance: 15
-            else if (rand < 0.99) index = 2; // 4% chance: 20
-            else index = 0;                  // 1% chance: 50 (Jackpot)
+         function spin() {
+    let rand = Math.random();
+    let index;
+    
+    // Probability distribution (Sector index milin kan thlak)
+    if (rand < 0.50) index = 4;      // 50% chance: 5 Coins
+    else if (rand < 0.80) index = 1; // 30% chance: 10 Coins
+    else if (rand < 0.95) index = 3; // 15% chance: 15 Coins
+    else if (rand < 0.99) index = 2; // 4% chance: 20 Coins
+    else index = 0;                  // 1% chance: 50 Coins (Jackpot)
 
-            // Arrow (top) nen a inmil turin angle kan siam
-            let angle = (index * 60) + 1440; 
-            canvas.style.transition = "3s cubic-bezier(0.2, 0.8, 0.3, 1)";
-            canvas.style.transform = `rotate(-${angle}deg)`; // -rotate
-            
-            setTimeout(() => {
-                let win = parseInt(sectors[index].label);
-                coins += win;
-                localStorage.setItem('userCoins', coins);
-                document.getElementById('coinCount').innerText = coins;
-                alert("I hlawhchhuah chu: " + win + " coins!");
-            }, 3000);
-        }
+    // Math: Sector khat hi 60 degrees (360/6).
+    // Arrow top-a awm avangin negative rotation hian a point dik zawk.
+    let angle = (index * 60); 
+    let rotation = 1440 + angle; // 1440 chu 4 full turns a ni
+    
+    canvas.style.transition = "3s cubic-bezier(0.2, 0.8, 0.3, 1)";
+    canvas.style.transform = `rotate(-${rotation}deg)`; 
+    
+    setTimeout(() => {
+        let win = parseInt(sectors[index].label);
+        coins += win;
+        localStorage.setItem('userCoins', coins);
+        document.getElementById('coinCount').innerText = coins;
+        alert("I hlawhchhuah chu: " + win + " coins!");
+    }, 3000);
+}
+
 
         function withdraw() {
             let upi = prompt("I UPI ID min han pe rawh:");
