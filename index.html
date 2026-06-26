@@ -7,6 +7,8 @@
         body { font-family: sans-serif; background: #121212; color: white; padding: 20px; text-align: center; }
         .card { background: #1e1e1e; padding: 20px; border-radius: 15px; margin-bottom: 15px; }
         button { background: #007bff; color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .withdraw-btn { background: #28a745; }
+        .refer-btn { background: #ffc107; color: #000; }
     </style>
 </head>
 <body>
@@ -25,7 +27,12 @@
         <button onclick="earnPoints(100)">Claim Bonus</button>
     </div>
 
-    <button style="background: #28a745;" onclick="withdraw()">Withdraw ₹50 (5000 Pts)</button>
+    <div class="card">
+        <p>Invite friends & Earn 200 Points!</p>
+        <button class="refer-btn" onclick="refer()">Share Referral Link</button>
+    </div>
+
+    <button class="withdraw-btn" onclick="withdraw()">Withdraw ₹50 (5000 Pts)</button>
 
     <script>
         let tg = window.Telegram.WebApp;
@@ -34,11 +41,20 @@
         document.getElementById('points').innerText = points;
 
         function earnPoints(amount) {
-            // Ad loading simulation
             alert("Ads loading..."); 
             points += amount;
             localStorage.setItem('userPoints', points);
             document.getElementById('points').innerText = points;
+        }
+
+        function refer() {
+            let userId = tg.initDataUnsafe.user?.id || "guest";
+            let referralLink = "https://t.me/YourBotUsername?start=ref" + userId;
+            if (navigator.share) {
+                navigator.share({ title: 'Join & Earn!', text: 'He app hi download rawh:', url: referralLink });
+            } else {
+                prompt("I referral link chu hei hi a ni:", referralLink);
+            }
         }
 
         function withdraw() {
