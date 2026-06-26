@@ -6,7 +6,8 @@
     <style>
         body { text-align: center; font-family: 'Arial', sans-serif; background: #1a1a1a; color: white; margin: 0; padding: 20px; }
         #wheel-container { position: relative; width: 300px; margin: 30px auto; }
-        #arrow { position: absolute; top: -15px; left: 140px; width: 25px; height: 30px; background: #FFD700; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); z-index: 10; }
+        /* Arrow chu wheel chhungah a hawi ang */
+        #arrow { position: absolute; top: 10px; left: 140px; width: 25px; height: 30px; background: #FFD700; clip-path: polygon(50% 100%, 0% 0%, 100% 0%); z-index: 10; }
         canvas { border: 8px solid #fff; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
         button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; border-radius: 12px; border: none; background: #FFD700; color: #000; font-weight: bold; }
     </style>
@@ -29,10 +30,11 @@
 
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
+        // Index 0 chu arrow-in a kawh zawn ber tur a ni
         const sectors = [
-            { color: '#FF5733', label: '50' }, { color: '#33FF57', label: '5' },
-            { color: '#3357FF', label: '15' }, { color: '#F333FF', label: '20' },
-            { color: '#FF33A8', label: '10' }, { color: '#33FFF6', label: '5' }
+            { color: '#FF5733', label: '50' }, { color: '#FF33A8', label: '10' }, 
+            { color: '#F333FF', label: '20' }, { color: '#3357FF', label: '15' },
+            { color: '#33FF57', label: '5' }, { color: '#33FFF6', label: '5' }
         ];
 
         function drawWheel() {
@@ -45,7 +47,7 @@
                 ctx.fill();
                 ctx.save();
                 ctx.fillStyle = "#000";
-                ctx.font = "bold 18px Arial";
+                ctx.font = "bold 20px Arial";
                 ctx.translate(150 + Math.cos(i * arc + arc/2) * 90, 150 + Math.sin(i * arc + arc/2) * 90);
                 ctx.rotate(i * arc + arc/2 + Math.PI/2);
                 ctx.fillText(s.label, -10, 0);
@@ -57,16 +59,16 @@
         function spin() {
             let rand = Math.random();
             let index;
-            // Probability distribution
-            if (rand < 0.50) index = 1;      // 50% chance: 5 Coins
-            else if (rand < 0.80) index = 4; // 30% chance: 10 Coins
-            else if (rand < 0.95) index = 2; // 15% chance: 15 Coins
-            else if (rand < 0.99) index = 3; // 4% chance: 20 Coins
-            else index = 0;                  // 1% chance: 50 Coins (Jackpot)
+            if (rand < 0.50) index = 4;      // 50% chance: 5
+            else if (rand < 0.80) index = 1; // 30% chance: 10
+            else if (rand < 0.95) index = 3; // 15% chance: 15
+            else if (rand < 0.99) index = 2; // 4% chance: 20
+            else index = 0;                  // 1% chance: 50 (Jackpot)
 
-            let angle = (index * 60) + 1440;
+            // Arrow (top) nen a inmil turin angle kan siam
+            let angle = (index * 60) + 1440; 
             canvas.style.transition = "3s cubic-bezier(0.2, 0.8, 0.3, 1)";
-            canvas.style.transform = `rotate(${angle}deg)`;
+            canvas.style.transform = `rotate(-${angle}deg)`; // -rotate
             
             setTimeout(() => {
                 let win = parseInt(sectors[index].label);
