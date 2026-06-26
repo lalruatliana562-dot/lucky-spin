@@ -1,43 +1,43 @@
  <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Spin Game</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { text-align: center; font-family: Arial; padding: 20px; }
-        #wheel { width: 250px; height: 250px; border: 5px solid #333; border-radius: 50%; margin: 20px auto; transition: transform 3s ease-out; }
-        .btn { padding: 10px 20px; margin: 10px; cursor: pointer; }
+        body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
+        #wheel { width: 200px; height: 200px; border-radius: 50%; border: 5px solid #333; margin: 20px auto; transition: 3s; background: conic-gradient(red 0deg 90deg, yellow 90deg 180deg, green 180deg 270deg, blue 270deg 360deg); }
     </style>
 </head>
 <body>
-    <h1>Lucky Spin</h1>
-    <p>Total Coins: <span id="coins">0</span></p>
-    
-    <!-- Wheel image placeholder -->
-    <div id="wheel" style="background: conic-gradient(red 0deg 90deg, yellow 90deg 180deg, green 180deg 270deg, blue 270deg 360deg);"></div>
-    
-    <button class="btn" onclick="spin()">Spin Now</button>
-    <button class="btn" onclick="withdraw()">Withdraw</button>
+    <h3>Lucky Spin</h3>
+    <p>Coins: <span id="coinCount">0</span></p>
+    <div id="wheel"></div>
+    <button onclick="spin()">Spin Now</button>
+    <button onclick="withdraw()">Withdraw</button>
 
     <script>
-        let totalCoins = 0;
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        let coins = parseInt(localStorage.getItem('userCoins')) || 0;
+        document.getElementById('coinCount').innerText = coins;
+
         function spin() {
             let wheel = document.getElementById('wheel');
-            let randomDeg = Math.floor(Math.random() * 3600) + 360;
-            wheel.style.transform = `rotate(${randomDeg}deg)`;
-            
+            let deg = Math.floor(Math.random() * 3600) + 720;
+            wheel.style.transform = `rotate(${deg}deg)`;
             setTimeout(() => {
-                totalCoins += 10;
-                document.getElementById('coins').innerText = totalCoins;
-                alert("I hlawhchhuah chu: 10 coins!");
+                coins += 10;
+                localStorage.setItem('userCoins', coins);
+                document.getElementById('coinCount').innerText = coins;
             }, 3000);
         }
+
         function withdraw() {
-            if(totalCoins >= 100) {
-                alert("Withdraw request sent! Coins: " + totalCoins);
+            if (coins >= 100) {
+                // Telegram chat-ah message thawn tur
+                tg.sendData("Withdraw Request: " + coins + " coins, User: " + tg.initDataUnsafe.user.username);
             } else {
-                alert("Withdraw nan 100 coins i mamawh!");
+                alert("Withdraw nan 100 coins a ngai!");
             }
         }
     </script>
