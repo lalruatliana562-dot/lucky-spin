@@ -4,15 +4,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { text-align: center; font-family: sans-serif; background: #222; color: white; }
-        canvas { border: 5px solid #fff; border-radius: 50%; margin: 20px auto; display: block; }
-        button { padding: 15px 30px; font-size: 16px; margin: 5px; cursor: pointer; }
+        body { text-align: center; font-family: 'Arial', sans-serif; background: #1a1a1a; color: white; margin: 0; padding: 20px; }
+        #wheel-container { position: relative; width: 300px; margin: 30px auto; }
+        #arrow { position: absolute; top: -15px; left: 140px; width: 25px; height: 30px; background: #FFD700; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); z-index: 10; }
+        canvas { border: 8px solid #fff; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; border-radius: 12px; border: none; background: #FFD700; color: #000; font-weight: bold; }
     </style>
 </head>
 <body>
     <h3>Lucky Spin</h3>
     <p>Total Coins: <span id="coinCount">0</span></p>
-    <canvas id="wheel" width="300" height="300"></canvas>
+    <div id="wheel-container">
+        <div id="arrow"></div>
+        <canvas id="wheel" width="300" height="300"></canvas>
+    </div>
     <button onclick="spin()">Spin Now</button>
     <button onclick="withdraw()">Withdraw</button>
 
@@ -24,11 +29,10 @@
 
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
-        // Price pool ti tlem tawh (1, 5, 10, 20, 50 coins)
         const sectors = [
-            { color: '#FF5733', label: '1' }, { color: '#33FF57', label: '5' },
-            { color: '#3357FF', label: '10' }, { color: '#F333FF', label: '0' },
-            { color: '#FF33A8', label: '50' }, { color: '#33FFF6', label: '20' }
+            { color: '#FF5733', label: '50' }, { color: '#33FF57', label: '5' },
+            { color: '#3357FF', label: '15' }, { color: '#F333FF', label: '20' },
+            { color: '#FF33A8', label: '10' }, { color: '#33FFF6', label: '5' }
         ];
 
         function drawWheel() {
@@ -37,27 +41,31 @@
                 ctx.beginPath();
                 ctx.fillStyle = s.color;
                 ctx.moveTo(150, 150);
-                ctx.arc(150, 150, 140, i * arc, (i + 1) * arc);
+                ctx.arc(150, 150, 145, i * arc, (i + 1) * arc);
                 ctx.fill();
                 ctx.save();
-                ctx.fillStyle = "#fff";
-                ctx.translate(150 + Math.cos(i * arc + arc/2) * 80, 150 + Math.sin(i * arc + arc/2) * 80);
+                ctx.fillStyle = "#000";
+                ctx.font = "bold 18px Arial";
+                ctx.translate(150 + Math.cos(i * arc + arc/2) * 90, 150 + Math.sin(i * arc + arc/2) * 90);
                 ctx.rotate(i * arc + arc/2 + Math.PI/2);
-                ctx.fillText(s.label + " Coins", -20, 0);
+                ctx.fillText(s.label, -10, 0);
                 ctx.restore();
             });
         }
         drawWheel();
 
         function spin() {
-            // Chance: 0 (Lose) a chhuah tam nan random percentage kan ti sang
             let rand = Math.random();
             let index;
-            if (rand < 0.5) index = 3; // 50% chance in '0' (Lose) a chhuak
-            else index = Math.floor(Math.random() * 5); // A bakah chuan point tlem te te
+            // Probability distribution
+            if (rand < 0.50) index = 1;      // 50% chance: 5 Coins
+            else if (rand < 0.80) index = 4; // 30% chance: 10 Coins
+            else if (rand < 0.95) index = 2; // 15% chance: 15 Coins
+            else if (rand < 0.99) index = 3; // 4% chance: 20 Coins
+            else index = 0;                  // 1% chance: 50 Coins (Jackpot)
 
             let angle = (index * 60) + 1440;
-            canvas.style.transition = "3s ease-out";
+            canvas.style.transition = "3s cubic-bezier(0.2, 0.8, 0.3, 1)";
             canvas.style.transform = `rotate(${angle}deg)`;
             
             setTimeout(() => {
@@ -72,7 +80,7 @@
         function withdraw() {
             let upi = prompt("I UPI ID min han pe rawh:");
             if (upi) {
-                tg.sendData("Withdraw Request: " + coins + " coins, User: " + tg.initDataUnsafe.user.username + ", UPI: " + upi);
+                tg.sendData("Withdraw Request: " + coins + " coins, User: " + (tg.initDataUnsafe.user?.username || "Guest") + ", UPI: " + upi);
             }
         }
     </script>
