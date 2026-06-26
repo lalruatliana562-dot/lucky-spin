@@ -6,7 +6,7 @@
     <style>
         body { font-family: sans-serif; background: #121212; color: white; padding: 20px; text-align: center; }
         .card { background: #1e1e1e; padding: 20px; border-radius: 15px; margin-bottom: 15px; }
-        button { background: #0088cc; color: white; border: none; padding: 12px 20px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
+        button { background: #007bff; color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -34,7 +34,7 @@
         document.getElementById('points').innerText = points;
 
         function earnPoints(amount) {
-            // Heta hian AdMob/Unity Ads code i dah ang
+            // Ad loading simulation
             alert("Ads loading..."); 
             points += amount;
             localStorage.setItem('userPoints', points);
