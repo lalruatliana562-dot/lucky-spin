@@ -3,11 +3,13 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Adsgram Script -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
         body { font-family: sans-serif; background: #121212; color: white; padding: 20px; text-align: center; }
         .card { background: #1e1e1e; padding: 20px; border-radius: 15px; margin-bottom: 15px; }
         button { background: #007bff; color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button:disabled { background: #555; cursor: not-allowed; }
         .withdraw-btn { background: #28a745; margin-top: 20px; }
         .copy-btn { width: auto; margin: 0; background: #ffc107; color: #000; padding: 10px 20px; }
         input { flex: 1; padding: 12px; border-radius: 8px; border: none; background: #333; color: #fff; font-size: 14px; }
@@ -23,12 +25,12 @@
 
     <div class="card">
         <p>Watch Ad & Earn 50 Points</p>
-        <button onclick="earnPoints(50)">Watch Ad</button>
+        <button id="adBtn" onclick="earnPoints(50, false)">Watch Ad</button>
     </div>
 
     <div class="card">
         <p>Daily Bonus (100 Points)</p>
-        <button onclick="earnPoints(100)">Claim Bonus</button>
+        <button id="bonusBtn" onclick="earnPoints(100, true)">Claim Bonus</button>
     </div>
 
     <div class="card">
@@ -61,24 +63,83 @@
                 localStorage.setItem('referred_by_' + startParam, 'true');
                 alert("I thianpa link atanga lo lut i ni e!");
             }
+
+            // Daily Bonus vawi khat claim tawh lo check-na
+            checkDailyBonusStatus();
         };
 
-        function earnPoints(amount) {
-            alert("Ads loading...");
+        function checkDailyBonusStatus() {
+            let lastBonusDate = localStorage.getItem('lastBonusDate');
+            let today = new Date().toDateString(); // Vawiin date (e.g., "Fri Jun 26 2026")
+
+            if (lastBonusDate === today) {
+                let bonusBtn = document.getElementById('bonusBtn');
+                bonusBtn.disabled = true;
+                bonusBtn.innerText = "Claimed Today!";
+            }
+        }
+
+        function earnPoints(amount, isDailyBonus) {
+            let adBtn = document.getElementById('adBtn');
+            let bonusBtn = document.getElementById('bonusBtn');
             
-            // Kan Test Platform ad block ID dik tak '36294' kan thun thlap e
+            // Daily Bonus a nih chuan, vawiin lamah a claim tawh em lo en hmasat tur
+            if (isDailyBonus) {
+                let lastBonusDate = localStorage.getItem('lastBonusDate');
+                let today = new Date().toDateString();
+                if (lastBonusDate === today) {
+                    alert("Vawiin atan Daily Bonus i claim tawh! Naktukah lo kal leh rawh.");
+                    return;
+                }
+            }
+
+            let originalAdText = adBtn.innerText;
+            let originalBonusText = bonusBtn.innerText;
+
+            adBtn.disabled = true;
+            bonusBtn.disabled = true;
+            
+            if (isDailyBonus) {
+                bonusBtn.innerText = "Loading Ad...";
+            } else {
+                adBtn.innerText = "Loading Ad...";
+            }
+            
+            // Adsgram active block ID 36294
             const AdController = window.Adsgram.init({ blockId: "36294" });
             
             AdController.show().then((result) => {
-                // Ad en zawh thlap hnuah chauh point a pung ang
+                // Ad en zawh a nih chuan point kan pe ang
                 points += amount;
                 localStorage.setItem('userPoints', points);
                 document.getElementById('points').innerText = points;
-                alert("Ad i en zawh avangin " + amount + " Points i hmu e!");
+                
+                if (isDailyBonus) {
+                    // Daily Bonus date kan chhinchhiah nghal vang vang ang
+                    let today = new Date().toDateString();
+                    localStorage.setItem('lastBonusDate', today);
+                    alert("Daily Bonus i en zawh avangin 100 Points i hmu e!");
+                } else {
+                    alert("Ad i en zawh avangin 50 Points i hmu e!");
+                }
+                
+                resetButtons();
             }).catch((result) => {
-                // Ad en zawh hmaa an hmeh chhuah chuan
                 alert("Ad en zawh a nih loh avangin point hmuh tur a awm lo.");
+                resetButtons();
             });
+
+            function resetButtons() {
+                adBtn.disabled = false;
+                adBtn.innerText = originalAdText;
+                
+                // Daily bonus a nih chuan a hmeh nawn theih loh nan kan lock zui ang, a nih loh chuan kan ti nung leh ang
+                checkDailyBonusStatus();
+                if (localStorage.getItem('lastBonusDate') !== new Date().toDateString()) {
+                    bonusBtn.disabled = false;
+                    bonusBtn.innerText = originalBonusText;
+                }
+            }
         }
 
         function copyLink() {
