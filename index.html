@@ -64,13 +64,12 @@
                 alert("I thianpa link atanga lo lut i ni e!");
             }
 
-            // Daily Bonus vawi khat claim tawh lo check-na
             checkDailyBonusStatus();
         };
 
         function checkDailyBonusStatus() {
             let lastBonusDate = localStorage.getItem('lastBonusDate');
-            let today = new Date().toDateString(); // Vawiin date (e.g., "Fri Jun 26 2026")
+            let today = new Date().toDateString();
 
             if (lastBonusDate === today) {
                 let bonusBtn = document.getElementById('bonusBtn');
@@ -83,7 +82,6 @@
             let adBtn = document.getElementById('adBtn');
             let bonusBtn = document.getElementById('bonusBtn');
             
-            // Daily Bonus a nih chuan, vawiin lamah a claim tawh em lo en hmasat tur
             if (isDailyBonus) {
                 let lastBonusDate = localStorage.getItem('lastBonusDate');
                 let today = new Date().toDateString();
@@ -105,17 +103,15 @@
                 adBtn.innerText = "Loading Ad...";
             }
             
-            // Adsgram active block ID 36294
-            const AdController = window.Adsgram.init({ blockId: "36294" });
+            // Kan Live Block ID thar '36299' kan hmang ta e
+            const AdController = window.Adsgram.init({ blockId: "36299" });
             
             AdController.show().then((result) => {
-                // Ad en zawh a nih chuan point kan pe ang
                 points += amount;
                 localStorage.setItem('userPoints', points);
                 document.getElementById('points').innerText = points;
                 
                 if (isDailyBonus) {
-                    // Daily Bonus date kan chhinchhiah nghal vang vang ang
                     let today = new Date().toDateString();
                     localStorage.setItem('lastBonusDate', today);
                     alert("Daily Bonus i en zawh avangin 100 Points i hmu e!");
@@ -133,7 +129,6 @@
                 adBtn.disabled = false;
                 adBtn.innerText = originalAdText;
                 
-                // Daily bonus a nih chuan a hmeh nawn theih loh nan kan lock zui ang, a nih loh chuan kan ti nung leh ang
                 checkDailyBonusStatus();
                 if (localStorage.getItem('lastBonusDate') !== new Date().toDateString()) {
                     bonusBtn.disabled = false;
