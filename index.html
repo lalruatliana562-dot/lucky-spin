@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,11 +29,15 @@
 
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
-        // Sector order (Clockwise aṭangin):
+        
+        // HEI HI PAWIMAWH: Sector order hi i wheel design nena inmil tur a ni
         const sectors = [
-            { color: '#FF5733', label: '50' }, { color: '#FF33A8', label: '10' },
-            { color: '#F333FF', label: '20' }, { color: '#3357FF', label: '15' },
-            { color: '#33FF57', label: '5' }, { color: '#33FFF6', label: '5' }
+            { label: '50', color: '#FF5733' },
+            { label: '5', color: '#33FF57' },
+            { label: '15', color: '#3357FF' },
+            { label: '20', color: '#F333FF' },
+            { label: '10', color: '#FF33A8' },
+            { label: '5', color: '#33FFF6' }
         ];
 
         function drawWheel() {
@@ -59,14 +63,14 @@
             let rand = Math.random();
             let index;
             // Probability distribution milin index kan thlan tir
-            if (rand < 0.50) index = 4;      // 50% chance: 5
-            else if (rand < 0.80) index = 1; // 30% chance: 10
-            else if (rand < 0.95) index = 3; // 15% chance: 15
-            else if (rand < 0.99) index = 2; // 4% chance: 20
+            if (rand < 0.50) index = 1;      // 50% chance: 5
+            else if (rand < 0.80) index = 4; // 30% chance: 10
+            else if (rand < 0.95) index = 2; // 15% chance: 15
+            else if (rand < 0.99) index = 3; // 4% chance: 20
             else index = 0;                  // 1% chance: 50
 
-            // Math: Sector khat hi 60 degree a ni. 
-            // 0 index kha top-a awm turin angle kan siam.
+            // Arrow (Top) nena inmil turin angle kan siam
+            // Index 0 hi top-ah a tawp nan 0 degree a ni
             let angle = index * 60; 
             let rotation = 1440 + angle; 
             
