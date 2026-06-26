@@ -4,97 +4,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { text-align: center; font-family: sans-serif; background: #1a1a1a; color: white; margin: 0; padding: 20px; }
-        #wheel-container { position: relative; width: 300px; margin: 30px auto; }
-        #arrow { position: absolute; top: -10px; left: 140px; width: 20px; height: 25px; background: #FFD700; clip-path: polygon(50% 100%, 0% 0%, 100% 0%); z-index: 10; }
-        canvas { border: 8px solid #fff; border-radius: 50%; display: block; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
-        button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; border-radius: 10px; background: #FFD700; border: none; font-weight: bold; }
+        body { font-family: sans-serif; background: #121212; color: white; padding: 20px; text-align: center; }
+        .card { background: #1e1e1e; padding: 20px; border-radius: 15px; margin-bottom: 15px; }
+        button { background: #0088cc; color: white; border: none; padding: 12px 20px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-    <h3>Lucky Spin</h3>
-    <p>Total Coins: <span id="coinCount">0</span></p>
-    <div id="wheel-container">
-        <div id="arrow"></div>
-        <canvas id="wheel" width="300" height="300"></canvas>
+    <h3>Reward App</h3>
+    <div class="card">
+        <h2>Points: <span id="points">0</span></h2>
     </div>
-    <button id="spinBtn" onclick="spin()">Spin Now</button>
-    <button onclick="withdraw()">Withdraw</button>
+    
+    <div class="card">
+        <p>Watch Ad & Earn 50 Points</p>
+        <button onclick="earnPoints(50)">Watch Ad</button>
+    </div>
+
+    <div class="card">
+        <p>Daily Bonus (100 Points)</p>
+        <button onclick="earnPoints(100)">Claim Bonus</button>
+    </div>
+
+    <button style="background: #28a745;" onclick="withdraw()">Withdraw ₹50 (5000 Pts)</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-        let coins = parseInt(localStorage.getItem('userCoins')) || 0;
-        document.getElementById('coinCount').innerText = coins;
+        let points = parseInt(localStorage.getItem('userPoints')) || 0;
+        document.getElementById('points').innerText = points;
 
-        const canvas = document.getElementById('wheel');
-        const ctx = canvas.getContext('2d');
-        
-        // Sector order (Clockwise, top aṭangin):
-     const sectors = [
-    { label: '50', color: '#FF5733' }, // Index 0
-    { label: '5', color: '#33FF57' },  // Index 1
-    { label: '15', color: '#3357FF' }, // Index 2
-    { label: '20', color: '#F333FF' }, // Index 3
-    { label: '10', color: '#FF33A8' }, // Index 4
-    { label: '5', color: '#33FFF6' }   // Index 5
-];
-
-
-        function drawWheel() {
-            let arc = Math.PI * 2 / sectors.length;
-            sectors.forEach((s, i) => {
-                ctx.beginPath();
-                ctx.fillStyle = s.color;
-                ctx.moveTo(150, 150);
-                ctx.arc(150, 150, 140, i * arc - Math.PI/2, (i + 1) * arc - Math.PI/2);
-                ctx.fill();
-                ctx.save();
-                ctx.fillStyle = "#000";
-                ctx.font = "bold 20px Arial";
-                ctx.translate(150 + Math.cos(i * arc) * 90, 150 + Math.sin(i * arc) * 90);
-                ctx.rotate(i * arc + Math.PI/2);
-                ctx.fillText(s.label, -10, 0);
-                ctx.restore();
-            });
+        function earnPoints(amount) {
+            // Heta hian AdMob/Unity Ads code i dah ang
+            alert("Ads loading..."); 
+            points += amount;
+            localStorage.setItem('userPoints', points);
+            document.getElementById('points').innerText = points;
         }
-        drawWheel();
-
-          function spin() {
-    document.getElementById('spinBtn').disabled = true;
-    
-    // 1. Random index kan thlang
-    let rand = Math.random();
-    let index;
-    if (rand < 0.50) index = 4;      // 50% chance: 5
-    else if (rand < 0.80) index = 1; // 30% chance: 10
-    else if (rand < 0.95) index = 3; // 15% chance: 15
-    else if (rand < 0.99) index = 2; // 4% chance: 20
-    else index = 0;                  // 1% chance: 50
-
-    // 2. PAWIMAWH: Sector 6 a awm avangin sector khat hi 60 degrees.
-    // Index 0 hi top-ah a awm nan offset kan hmang.
-    // Spin animation hi a vir kual dan nen in-mil turin kan calculate.
-    let rotation = (index * 60) + 1440; // 1440 chu full turns 4
-    
-    canvas.style.transition = "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)";
-    canvas.style.transform = `rotate(-${rotation}deg)`; 
-    
-    // 3. Result kan pe
-    setTimeout(() => {
-        let win = parseInt(sectors[index].label);
-        coins += win;
-        localStorage.setItem('userCoins', coins);
-        document.getElementById('coinCount').innerText = coins;
-        alert("I hlawhchhuah chu: " + win + " coins!");
-        document.getElementById('spinBtn').disabled = false;
-    }, 4000);
-}
-
 
         function withdraw() {
-            let upi = prompt("I UPI ID min han pe rawh:");
-            if (upi) tg.sendData("Withdraw: " + coins + " coins, UPI: " + upi);
+            if (points >= 5000) {
+                let upi = prompt("Enter your UPI ID:");
+                if (upi) tg.sendData("Withdraw: " + points + " pts, UPI: " + upi);
+            } else {
+                alert("Withdraw nan 5000 points a ngai!");
+            }
         }
     </script>
 </body>
