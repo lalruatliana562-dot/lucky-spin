@@ -3,7 +3,6 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Adsgram Script -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
         body { font-family: sans-serif; background: #121212; color: white; padding: 20px; text-align: center; }
@@ -67,8 +66,8 @@
         function earnPoints(amount) {
             alert("Ads loading...");
             
-            // Kan Ad block ID active thar ber '36202' kan thun ta e
-            const AdController = window.Adsgram.init({ blockId: "36202" });
+            // Kan Test Platform ad block ID dik tak '36294' kan thun thlap e
+            const AdController = window.Adsgram.init({ blockId: "36294" });
             
             AdController.show().then((result) => {
                 // Ad en zawh thlap hnuah chauh point a pung ang
@@ -77,7 +76,7 @@
                 document.getElementById('points').innerText = points;
                 alert("Ad i en zawh avangin " + amount + " Points i hmu e!");
             }).catch((result) => {
-                // Ad an en zawh loh chuan emaw a thian hma chuan
+                // Ad en zawh hmaa an hmeh chhuah chuan
                 alert("Ad en zawh a nih loh avangin point hmuh tur a awm lo.");
             });
         }
