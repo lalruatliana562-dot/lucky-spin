@@ -4,12 +4,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { text-align: center; font-family: 'Arial', sans-serif; background: #1a1a1a; color: white; margin: 0; padding: 20px; }
+        body { text-align: center; font-family: sans-serif; background: #1a1a1a; color: white; margin: 0; padding: 20px; }
         #wheel-container { position: relative; width: 300px; margin: 30px auto; }
-        /* Arrow chu wheel chhungah a hawi ang */
-        #arrow { position: absolute; top: 10px; left: 140px; width: 25px; height: 30px; background: #FFD700; clip-path: polygon(50% 100%, 0% 0%, 100% 0%); z-index: 10; }
-        canvas { border: 8px solid #fff; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-        button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; border-radius: 12px; border: none; background: #FFD700; color: #000; font-weight: bold; }
+        #arrow { position: absolute; top: -10px; left: 140px; width: 20px; height: 25px; background: #FFD700; clip-path: polygon(50% 100%, 0% 0%, 100% 0%); z-index: 10; }
+        canvas { border: 8px solid #fff; border-radius: 50%; display: block; }
+        button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; border-radius: 10px; background: #FFD700; border: none; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -30,9 +29,9 @@
 
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
-        // Index 0 chu arrow-in a kawh zawn ber tur a ni
+        // Sector order (Clockwise aṭangin):
         const sectors = [
-            { color: '#FF5733', label: '50' }, { color: '#FF33A8', label: '10' }, 
+            { color: '#FF5733', label: '50' }, { color: '#FF33A8', label: '10' },
             { color: '#F333FF', label: '20' }, { color: '#3357FF', label: '15' },
             { color: '#33FF57', label: '5' }, { color: '#33FFF6', label: '5' }
         ];
@@ -43,7 +42,7 @@
                 ctx.beginPath();
                 ctx.fillStyle = s.color;
                 ctx.moveTo(150, 150);
-                ctx.arc(150, 150, 145, i * arc, (i + 1) * arc);
+                ctx.arc(150, 150, 140, i * arc, (i + 1) * arc);
                 ctx.fill();
                 ctx.save();
                 ctx.fillStyle = "#000";
@@ -56,39 +55,37 @@
         }
         drawWheel();
 
-         function spin() {
-    let rand = Math.random();
-    let index;
-    
-    // Probability distribution (Sector index milin kan thlak)
-    if (rand < 0.50) index = 4;      // 50% chance: 5 Coins
-    else if (rand < 0.80) index = 1; // 30% chance: 10 Coins
-    else if (rand < 0.95) index = 3; // 15% chance: 15 Coins
-    else if (rand < 0.99) index = 2; // 4% chance: 20 Coins
-    else index = 0;                  // 1% chance: 50 Coins (Jackpot)
+        function spin() {
+            let rand = Math.random();
+            let index;
+            // Probability distribution milin index kan thlan tir
+            if (rand < 0.50) index = 4;      // 50% chance: 5
+            else if (rand < 0.80) index = 1; // 30% chance: 10
+            else if (rand < 0.95) index = 3; // 15% chance: 15
+            else if (rand < 0.99) index = 2; // 4% chance: 20
+            else index = 0;                  // 1% chance: 50
 
-    // Math: Sector khat hi 60 degrees (360/6).
-    // Arrow top-a awm avangin negative rotation hian a point dik zawk.
-    let angle = (index * 60); 
-    let rotation = 1440 + angle; // 1440 chu 4 full turns a ni
-    
-    canvas.style.transition = "3s cubic-bezier(0.2, 0.8, 0.3, 1)";
-    canvas.style.transform = `rotate(-${rotation}deg)`; 
-    
-    setTimeout(() => {
-        let win = parseInt(sectors[index].label);
-        coins += win;
-        localStorage.setItem('userCoins', coins);
-        document.getElementById('coinCount').innerText = coins;
-        alert("I hlawhchhuah chu: " + win + " coins!");
-    }, 3000);
-}
-
+            // Math: Sector khat hi 60 degree a ni. 
+            // 0 index kha top-a awm turin angle kan siam.
+            let angle = index * 60; 
+            let rotation = 1440 + angle; 
+            
+            canvas.style.transition = "3s cubic-bezier(0.2, 0.8, 0.3, 1)";
+            canvas.style.transform = `rotate(-${rotation}deg)`; 
+            
+            setTimeout(() => {
+                let win = parseInt(sectors[index].label);
+                coins += win;
+                localStorage.setItem('userCoins', coins);
+                document.getElementById('coinCount').innerText = coins;
+                alert("I hlawhchhuah chu: " + win + " coins!");
+            }, 3000);
+        }
 
         function withdraw() {
             let upi = prompt("I UPI ID min han pe rawh:");
             if (upi) {
-                tg.sendData("Withdraw Request: " + coins + " coins, User: " + (tg.initDataUnsafe.user?.username || "Guest") + ", UPI: " + upi);
+                tg.sendData("Withdraw: " + coins + " coins, User: " + (tg.initDataUnsafe.user?.username || "Guest") + ", UPI: " + upi);
             }
         }
     </script>
