@@ -5,7 +5,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
-        #wheel { width: 200px; height: 200px; border-radius: 50%; border: 5px solid #333; margin: 20px auto; transition: 3s; background: conic-gradient(red 0deg 90deg, yellow 90deg 180deg, green 180deg 270deg, blue 270deg 360deg); }
+        #wheel { width: 200px; height: 200px; border-radius: 50%; border: 5px solid #333; margin: 20px auto; transition: 3s cubic-bezier(0.17, .67, .12, .99); background: conic-gradient(red 0deg 90deg, yellow 90deg 180deg, green 180deg 270deg, blue 270deg 360deg); }
     </style>
 </head>
 <body>
@@ -23,18 +23,21 @@
 
         function spin() {
             let wheel = document.getElementById('wheel');
-            let deg = Math.floor(Math.random() * 3600) + 720;
+            let random = Math.floor(Math.random() * 4); // 0 to 3
+            let deg = (random * 90) + 1440; // 4 full rotations + angle
             wheel.style.transform = `rotate(${deg}deg)`;
+            
             setTimeout(() => {
-                coins += 10;
+                let rewards = [50, 5, 20, 10]; // Red, Yellow, Green, Blue
+                coins += rewards[random];
                 localStorage.setItem('userCoins', coins);
                 document.getElementById('coinCount').innerText = coins;
+                alert("I hlawhchhuah chu: " + rewards[random] + " coins!");
             }, 3000);
         }
 
         function withdraw() {
             if (coins >= 100) {
-                // Telegram chat-ah message thawn tur
                 tg.sendData("Withdraw Request: " + coins + " coins, User: " + tg.initDataUnsafe.user.username);
             } else {
                 alert("Withdraw nan 100 coins a ngai!");
