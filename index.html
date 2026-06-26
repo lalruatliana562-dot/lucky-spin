@@ -3,21 +3,24 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
         body { font-family: sans-serif; background: #121212; color: white; padding: 20px; text-align: center; }
         .card { background: #1e1e1e; padding: 20px; border-radius: 15px; margin-bottom: 15px; }
-        button { background: #007bff; color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button { background: #007bff; color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; }
         .withdraw-btn { background: #28a745; margin-top: 20px; }
         .copy-btn { width: auto; margin: 0; background: #ffc107; color: #000; padding: 10px 20px; }
-        input { flex: 1; padding: 12px; border-radius: 8px; border: none; background: #333; color: #fff; font-size: 14px; width: 50%; }
+        input { flex: 1; padding: 12px; border-radius: 8px; border: none; background: #333; color: #fff; font-size: 14px; }
     </style>
 </head>
 <body>
+
     <h3>Reward App</h3>
+    
     <div class="card">
         <h2>Points: <span id="points">0</span></h2>
     </div>
-    
+
     <div class="card">
         <p>Watch Ad & Earn 50 Points</p>
         <button onclick="earnPoints(50)">Watch Ad</button>
@@ -41,14 +44,15 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-        
+
         let points = parseInt(localStorage.getItem('userPoints')) || 0;
         document.getElementById('points').innerText = points;
 
         window.onload = function() {
             let userId = tg.initDataUnsafe.user?.id || "guest";
-            let botUsername = "MizoEarnBot"; 
-            
+            // Link dik taka kal nan bot username dik tak kan dah e
+            let botUsername = "Spin_Lucky_2026_bot";
+
             document.getElementById('refLink').value = "https://t.me/" + botUsername + "?startapp=" + userId;
 
             let startParam = tg.initDataUnsafe.start_param;
@@ -56,15 +60,26 @@
 
             if (startParam && startParam !== userId && !hasRewarded) {
                 localStorage.setItem('referred_by_' + startParam, 'true');
-                alert("I ṭhianpa link aṭanga lo lut i ni e!");
+                alert("I thianpa link atanga lo lut i ni e!");
             }
         };
 
         function earnPoints(amount) {
-            alert("Ads loading..."); 
-            points += amount;
-            localStorage.setItem('userPoints', points);
-            document.getElementById('points').innerText = points;
+            alert("Ads loading...");
+            
+            // Adsgram Block ID thar thunhna
+            const AdController = window.Adsgram.init({ blockId: "36295" });
+            
+            AdController.show().then((result) => {
+                // Ad en zawh thlap hnuah chauh point a pung ang
+                points += amount;
+                localStorage.setItem('userPoints', points);
+                document.getElementById('points').innerText = points;
+                alert("Ad i en zawh avangin " + amount + " Points i hmu e!");
+            }).catch((result) => {
+                // Ad an en chhuak hma a nih chuan
+                alert("Ad en zawh a nih loh avangin point hmuh tur a awm lo.");
+            });
         }
 
         function copyLink() {
@@ -72,7 +87,7 @@
             copyText.select();
             copyText.setSelectionRange(0, 99999);
             navigator.clipboard.writeText(copyText.value);
-            alert("Referral link copy a ni ta! I ṭhiante va thawn rawh le.");
+            alert("Referral link copy a ni ta! I thiante va thawn rawh le.");
         }
 
         function withdraw() {
