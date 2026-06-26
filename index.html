@@ -4,14 +4,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
-        #wheel { width: 200px; height: 200px; border-radius: 50%; border: 5px solid #333; margin: 20px auto; transition: 3s cubic-bezier(0.17, .67, .12, .99); background: conic-gradient(red 0deg 90deg, yellow 90deg 180deg, green 180deg 270deg, blue 270deg 360deg); }
+        body { text-align: center; font-family: sans-serif; background: #222; color: white; }
+        canvas { border: 5px solid #fff; border-radius: 50%; margin: 20px auto; display: block; }
+        button { padding: 15px 30px; font-size: 16px; margin: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
     <h3>Lucky Spin</h3>
     <p>Coins: <span id="coinCount">0</span></p>
-    <div id="wheel"></div>
+    <canvas id="wheel" width="300" height="300"></canvas>
     <button onclick="spin()">Spin Now</button>
     <button onclick="withdraw()">Withdraw</button>
 
@@ -21,26 +22,55 @@
         let coins = parseInt(localStorage.getItem('userCoins')) || 0;
         document.getElementById('coinCount').innerText = coins;
 
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const sectors = [
+            { color: '#FF5733', label: '1000$' }, { color: '#33FF57', label: '100$' },
+            { color: '#3357FF', label: '500$' }, { color: '#F333FF', label: 'LOSE' },
+            { color: '#FF33A8', label: '7000$' }, { color: '#33FFF6', label: '200$' }
+        ];
+
+        function drawWheel() {
+            let arc = Math.PI * 2 / sectors.length;
+            sectors.forEach((s, i) => {
+                ctx.beginPath();
+                ctx.fillStyle = s.color;
+                ctx.moveTo(150, 150);
+                ctx.arc(150, 150, 140, i * arc, (i + 1) * arc);
+                ctx.fill();
+                ctx.save();
+                ctx.fillStyle = "#fff";
+                ctx.translate(150 + Math.cos(i * arc + arc/2) * 80, 150 + Math.sin(i * arc + arc/2) * 80);
+                ctx.rotate(i * arc + arc/2 + Math.PI/2);
+                ctx.fillText(s.label, -10, 0);
+                ctx.restore();
+            });
+        }
+        drawWheel();
+
         function spin() {
-            let wheel = document.getElementById('wheel');
-            let random = Math.floor(Math.random() * 4); // 0 to 3
-            let deg = (random * 90) + 1440; // 4 full rotations + angle
-            wheel.style.transform = `rotate(${deg}deg)`;
+            let angle = Math.floor(Math.random() * 3600) + 720;
+            canvas.style.transition = "3s ease-out";
+            canvas.style.transform = `rotate(${angle}deg)`;
             
             setTimeout(() => {
-                let rewards = [50, 5, 20, 10]; // Red, Yellow, Green, Blue
-                coins += rewards[random];
-                localStorage.setItem('userCoins', coins);
-                document.getElementById('coinCount').innerText = coins;
-                alert("I hlawhchhuah chu: " + rewards[random] + " coins!");
+                let index = Math.floor(((angle % 360) / 60)); // 360/6 sectors
+                let win = sectors[sectors.length - 1 - index].label;
+                if(win !== 'LOSE') {
+                    coins += parseInt(win) || 10;
+                    localStorage.setItem('userCoins', coins);
+                    document.getElementById('coinCount').innerText = coins;
+                    alert("I hlawhchhuah chu: " + win);
+                } else {
+                    alert("A pawi hle mai, i chan!");
+                }
             }, 3000);
         }
 
         function withdraw() {
-            if (coins >= 100) {
-                tg.sendData("Withdraw Request: " + coins + " coins, User: " + tg.initDataUnsafe.user.username);
-            } else {
-                alert("Withdraw nan 100 coins a ngai!");
+            let upi = prompt("I UPI ID min han pe rawh:");
+            if (upi) {
+                tg.sendData("Withdraw Request: " + coins + " coins, User: " + tg.initDataUnsafe.user.username + ", UPI: " + upi);
             }
         }
     </script>
