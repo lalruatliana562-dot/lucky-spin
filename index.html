@@ -1,16 +1,44 @@
-<!DOCTYPE html>
-<html>
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Spin Game</title>
+    <style>
+        body { text-align: center; font-family: Arial; padding: 20px; }
+        #wheel { width: 250px; height: 250px; border: 5px solid #333; border-radius: 50%; margin: 20px auto; transition: transform 3s ease-out; }
+        .btn { padding: 10px 20px; margin: 10px; cursor: pointer; }
+    </style>
+</head>
 <body>
     <h1>Lucky Spin</h1>
-    <p>Spin the wheel to win! (Watch an ad first)</p>
-    <button onclick="spin()">Spin Now</button>
+    <p>Total Coins: <span id="coins">0</span></p>
+    
+    <!-- Wheel image placeholder -->
+    <div id="wheel" style="background: conic-gradient(red 0deg 90deg, yellow 90deg 180deg, green 180deg 270deg, blue 270deg 360deg);"></div>
+    
+    <button class="btn" onclick="spin()">Spin Now</button>
+    <button class="btn" onclick="withdraw()">Withdraw</button>
+
     <script>
+        let totalCoins = 0;
         function spin() {
-            // Ads code (e.g., AdMob Interstitial) a awm hma chuan:
-            alert("Ads load mek... Spin hma in en rawh!");
-            // Random prize logic (Loss loh nan 1-10 coins chauh)
-            let prize = Math.floor(Math.random() * 10) + 1;
-            alert("I hlawhchhuah chu: " + prize + " coins!");
+            let wheel = document.getElementById('wheel');
+            let randomDeg = Math.floor(Math.random() * 3600) + 360;
+            wheel.style.transform = `rotate(${randomDeg}deg)`;
+            
+            setTimeout(() => {
+                totalCoins += 10;
+                document.getElementById('coins').innerText = totalCoins;
+                alert("I hlawhchhuah chu: 10 coins!");
+            }, 3000);
+        }
+        function withdraw() {
+            if(totalCoins >= 100) {
+                alert("Withdraw request sent! Coins: " + totalCoins);
+            } else {
+                alert("Withdraw nan 100 coins i mamawh!");
+            }
         }
     </script>
 </body>
